@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:background="@android:color/transparent"
-            android:text="Sign Out"
+            android:text="@string/sign_out"
             android:textColor="@android:color/white" />
     </androidx.appcompat.widget.Toolbar>
 
@@ -51,7 +51,7 @@
             android:background="@drawable/rounded_edittext"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
-            android:hint="Type a message"
+            android:hint="@string/type_a_message"
             android:inputType="textMultiLine"
             android:maxLength="1000"
             android:padding="8dp"
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:text="Send"
+            android:text="@string/send"
             android:textColor="@android:color/white" />
     </LinearLayout>
 </RelativeLayout>
