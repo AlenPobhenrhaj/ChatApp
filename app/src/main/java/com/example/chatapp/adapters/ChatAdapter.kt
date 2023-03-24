@@ -1,6 +1,6 @@
 package com.example.chatapp.adapters
 
-import android.view.Gravity
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.databinding.ItemChatMessageBinding
 import com.example.chatapp.models.ChatMessage
-import java.text.SimpleDateFormat
-import java.util.*
+
 
 class ChatAdapter(private val chatMessages: List<ChatMessage>, private val currentUserId: String) :
     RecyclerView.Adapter<ChatAdapter.ChatMessageViewHolder>() {
@@ -32,8 +31,8 @@ class ChatAdapter(private val chatMessages: List<ChatMessage>, private val curre
             holder.binding.leftMessageLayout.visibility = View.VISIBLE
             holder.binding.rightMessageLayout.visibility = View.GONE
             holder.binding.leftMessageText.text = chatMessage.message
-            holder.binding.leftMessageLayout.setBackgroundResource(R.drawable.rounded_corner_sent)
-            holder.binding.leftMessageSender.text = chatMessage.sender
+            holder.binding.leftMessageLayout.setBackgroundResource(R.drawable.rounded_corner_received)
+            holder.binding.leftMessageSender.text = chatMessage.displayName
         }
     }
 

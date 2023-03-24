@@ -1,5 +1,6 @@
 package com.example.chatapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -13,13 +14,13 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.type.Date
 import java.util.*
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private val chatMessages = mutableListOf<ChatMessage>()
     private lateinit var adapter: ChatAdapter
+    private lateinit var auth: FirebaseAuth
 
     // Replace this with a unique identifier for the user, e.g., FirebaseAuth currentUser UID.
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "User1"
@@ -29,8 +30,10 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        auth = FirebaseAuth.getInstance()
+
         // Initialize RecyclerView
-        adapter = ChatAdapter(chatMessages, currentUserId)
+        adapter = ChatAdapter(chatMessages, auth.currentUser?.uid ?: "")
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
@@ -41,6 +44,11 @@ class ChatActivity : AppCompatActivity() {
             Log.d("TAG", "Send button clicked")
             sendMessage()
         }
+
+        binding.buttonSignOut.setOnClickListener {
+            signOut()
+        }
+
         listenForMessages()
     }
 
@@ -48,28 +56,40 @@ class ChatActivity : AppCompatActivity() {
         val messageText = binding.editTextMessage.text.toString().trim()
 
         if (messageText.isNotEmpty()) {
-            val chatMessage = ChatMessage(
-                message = messageText,
-                sender = currentUserId, // Replace with the unique user ID, e.g., FirebaseAuth currentUser UID.
-                timestamp = System.currentTimeMillis()
-            )
+            val userRef = FirebaseDatabase.getInstance().getReference("/users/${auth.currentUser?.uid}")
+            userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val displayName = snapshot.child("displayName").value.toString()
 
-            val ref = FirebaseDatabase.getInstance().getReference("/messages").push()
-            Log.d("TAG", "Before calling setValue() for ref: $ref")
-            ref.setValue(chatMessage)
-                .addOnSuccessListener {
-                    binding.editTextMessage.setText("")
-                    Log.d("TAG", "Message sent: $messageText")
+                    val chatMessage = ChatMessage(
+                        message = messageText,
+                        sender = auth.currentUser?.uid ?: "",
+                        timestamp = System.currentTimeMillis(),
+                        displayName = displayName
+                    )
+
+                    val ref = FirebaseDatabase.getInstance().getReference("/messages").push()
+                    Log.d("TAG", "Before calling setValue() for ref: $ref")
+                    ref.setValue(chatMessage)
+                        .addOnSuccessListener {
+                            binding.editTextMessage.setText("")
+                            Log.d("TAG", "Message sent: $messageText")
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(this@ChatActivity, "Failed to send message: ${exception.message}", Toast.LENGTH_SHORT).show()
+                            Log.e("TAG", "Failed to send message", exception)
+                        }
                 }
-                .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Failed to send message: ${exception.message}", Toast.LENGTH_SHORT).show()
-                    Log.e("TAG", "Failed to send message", exception)
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("TAG", "Error fetching display name", error.toException())
                 }
+            })
         } else {
             Toast.makeText(this, "Please enter a message", Toast.LENGTH_SHORT).show()
         }
-
     }
+
 
     private fun listenForMessages() {
         val ref = FirebaseDatabase.getInstance().getReference("/messages")
@@ -92,7 +112,12 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
-
+    private fun signOut() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
+    }
 }
+
 
 
