@@ -1,6 +1,5 @@
 package com.example.chatapp.activities
 
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -25,8 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(currentUser: FirebaseUser?) {
         if (currentUser != null) {
-            // User is signed in, launch ChatActivity
-            startActivity(Intent(this, ChatActivity::class.java))
+            // User is signed in, launch HomePageActivity
+            startActivity(Intent(this, HomePageActivity::class.java))
             finish()
         } else {
             // User is not signed in, launch LoginActivity
@@ -35,5 +34,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-

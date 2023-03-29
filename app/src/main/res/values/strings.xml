@@ -13,4 +13,7 @@
     <string name="type_a_message">Type a message</string>
     <string name="send">Send</string>
     <string name="open_chat">Open Chat</string>
+    <string name="user_image">user_image</string>
+    <string name="user_name">user_name</string>
+    <string name="user_email">user_email</string>
 </resources>

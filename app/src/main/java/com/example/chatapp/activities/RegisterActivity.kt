@@ -34,9 +34,11 @@ class RegisterActivity : AppCompatActivity() {
         val displayName = binding.editTextDisplayName.text.toString().trim()
 
         if (email.isNotEmpty() && password.isNotEmpty() && displayName.isNotEmpty()) {
+            // Create a new user with email and password
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
+                        // Get the user's unique ID
                         val userId = auth.currentUser?.uid
                         if (userId != null) {
                             // Save the display name to the Realtime Database
@@ -44,6 +46,7 @@ class RegisterActivity : AppCompatActivity() {
                             userRef.child("displayName").setValue(displayName)
                                 .addOnCompleteListener { saveTask ->
                                     if (saveTask.isSuccessful) {
+                                        // If successful, go to the chat screen
                                         startActivity(Intent(this, ChatActivity::class.java))
                                         finish()
                                     } else {

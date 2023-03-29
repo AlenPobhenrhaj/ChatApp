@@ -14,8 +14,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-
-
 class ChatActivity : AppCompatActivity() {
     // Variables for user interface and data
     private lateinit var binding: ActivityChatBinding

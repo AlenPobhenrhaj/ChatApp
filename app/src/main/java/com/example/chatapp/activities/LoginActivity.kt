@@ -16,25 +16,33 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
+        // Set up the login button as onClick using viewBinding
         binding.buttonLogin.setOnClickListener {
             signIn()
         }
 
+        // Set up the register button
         binding.buttonRegister.setOnClickListener {
+            // Navigate to RegisterActivity/Screen
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
+    // Function to sign in with email and password
     private fun signIn() {
         val email = binding.editTextEmail.text.toString().trim()
         val password = binding.editTextPassword.text.toString().trim()
+
+        // Check if both email and password are not empty
         if (email.isNotEmpty() && password.isNotEmpty()) {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        startActivity(Intent(this, ChatActivity::class.java))
+                        // If successful, go to the chat screen
+                        startActivity(Intent(this, HomePageActivity::class.java))
                         finish()
                     } else {
                         Toast.makeText(this, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
