@@ -28,7 +28,7 @@ class GroupChatActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        groupChatId = intent.getStringExtra("GROUP_CHAT_ID") ?: ""
+        groupChatId = intent.getStringExtra("GROUP_ID") ?: ""
 
         adapter = ChatAdapter(chatMessages, auth.currentUser?.uid ?: "")
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -61,7 +61,7 @@ class GroupChatActivity : AppCompatActivity() {
                         displayName = displayName
                     )
 
-                    val ref = FirebaseDatabase.getInstance().getReference("/groupChats/$groupChatId/messages").push()
+                    val ref = FirebaseDatabase.getInstance().getReference("/groups/$groupChatId/messages").push()
                     ref.setValue(chatMessage)
                         .addOnSuccessListener {
                             binding.editTextMessage.setText("")
@@ -84,7 +84,7 @@ class GroupChatActivity : AppCompatActivity() {
     }
 
     private fun listenForMessages() {
-        val ref = FirebaseDatabase.getInstance().getReference("/groupChats/$groupChatId/messages")
+        val ref = FirebaseDatabase.getInstance().getReference("/groups/$groupChatId/messages")
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 chatMessages.clear()

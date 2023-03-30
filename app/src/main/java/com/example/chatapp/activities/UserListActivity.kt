@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatapp.adapters.GroupListAdapter
 import com.example.chatapp.adapters.GroupMemberAdapter
 import com.example.chatapp.adapters.UserListAdapter
 import com.example.chatapp.databinding.ActivityUserlistPageBinding
@@ -23,7 +24,8 @@ class UserListActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var userRef: DatabaseReference
     private lateinit var adapter: UserListAdapter
-    private lateinit var adapter2: GroupMemberAdapter
+    private lateinit var groupAdapter: GroupListAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +39,13 @@ class UserListActivity : AppCompatActivity() {
 
         // Set up RecyclerView
         adapter = UserListAdapter()
-        adapter2 = GroupMemberAdapter()
         binding.userRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.userRecyclerView.adapter = adapter
+
+        // Set up Group RecyclerView
+        groupAdapter = GroupListAdapter()
+        binding.groupChatRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.groupChatRecyclerView.adapter = groupAdapter
 
         binding.buttonSignOut.setOnClickListener {
             signOut()
@@ -60,7 +66,7 @@ class UserListActivity : AppCompatActivity() {
         }
 
         loadUsers()
-        loadSelectableUsers(adapter2)
+        loadGroups()
 
     }
 
@@ -81,6 +87,30 @@ class UserListActivity : AppCompatActivity() {
             }
         })
     }
+
+    private fun loadGroups() {
+        val groupRef = database.getReference("groups")
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        groupRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val groups = mutableListOf<Group>()
+                for (childSnapshot in dataSnapshot.children) {
+                    val group = childSnapshot.getValue(Group::class.java)
+                    if (group != null && group.users.contains(currentUserId)) {
+                        group.id = childSnapshot.key.toString()
+                        groups.add(group)
+                    }
+                }
+                groupAdapter.submitList(groups)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+            }
+        })
+    }
+
 
     private fun showUserList() {
         binding.userRecyclerView.visibility = View.VISIBLE
