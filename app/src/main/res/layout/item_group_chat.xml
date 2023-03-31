@@ -4,23 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/groupChatIcon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/ic_baseline_group_24"
-        app:tint="@color/colorPrimary" />
+        app:tint="@color/colorPrimary"
+        android:background="@drawable/circular_image_border" />
 
     <TextView
         android:id="@+id/groupChatName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_weight="1"
         android:text="Group Chat Name"
         android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 </LinearLayout>

@@ -170,14 +170,22 @@ class UserListActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = mutableListOf<User>()
                 val currentUserId = auth.currentUser?.uid ?: return
+                Log.d("loadSelectableUsers", "Current user ID: $currentUserId")
+
                 for (childSnapshot in dataSnapshot.children) {
                     val user = childSnapshot.getValue(User::class.java)
-                    if (user != null && user.id != currentUserId) {
+                    if (user != null) {
                         user.id = childSnapshot.key
-                        users.add(user)
+                        Log.d("loadSelectableUsers", "Processing user ID: ${user.id}")
+
+                        if (user.id != currentUserId) {
+                            users.add(user)
+                        }
                     }
                 }
+
                 adapter.submitList(users)
+                adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -185,6 +193,8 @@ class UserListActivity : AppCompatActivity() {
             }
         })
     }
+
+
 
 
     private fun createGroupChat(groupName: String, selectedUserIds: List<String>) {

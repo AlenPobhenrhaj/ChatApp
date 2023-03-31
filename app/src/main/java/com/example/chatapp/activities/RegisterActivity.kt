@@ -47,7 +47,7 @@ class RegisterActivity : AppCompatActivity() {
                                 .addOnCompleteListener { saveTask ->
                                     if (saveTask.isSuccessful) {
                                         // If successful, go to the chat screen
-                                        startActivity(Intent(this, ChatActivity::class.java))
+                                        startActivity(Intent(this, HomePageActivity::class.java))
                                         finish()
                                     } else {
                                         Toast.makeText(this, "Failed to save display name: ${saveTask.exception?.message}", Toast.LENGTH_SHORT).show()
