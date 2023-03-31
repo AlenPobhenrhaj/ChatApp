@@ -198,7 +198,7 @@ class UserListActivity : AppCompatActivity() {
 
 
     private fun createGroupChat(groupName: String, selectedUserIds: List<String>) {
-        if (selectedUserIds.size < 2) { // Minimum 2 selected users + current user
+        if (selectedUserIds.size < 3) { // Minimum 2 selected users + current user
             Toast.makeText(this, "Please select at least 2 more users to create a group.", Toast.LENGTH_SHORT).show()
             return
         }
