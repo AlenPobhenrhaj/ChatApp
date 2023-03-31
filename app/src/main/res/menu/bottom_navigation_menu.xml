@@ -3,15 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_chat"
+        android:id="@+id/nav_user_list"
         android:icon="@drawable/ic_baseline_chat_24"
         android:title="@string/chats"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/nav_user_list"
-        android:icon="@drawable/ic_baseline_people_24"
-        android:title="@string/users"
         app:showAsAction="ifRoom" />
 
 </menu>

@@ -19,7 +19,6 @@
     <string name="chats">Chats</string>
     <string name="users">Users</string>
     <string name="welcome_to_chat_app">Welcome to Chat App</string>
-    <string name="toolbar_title_user_list">toolbar_title_user_list</string>
     <string name="button_one_to_one_chat">Message</string>
     <string name="button_group_chat">Group Chat</string>
 </resources>

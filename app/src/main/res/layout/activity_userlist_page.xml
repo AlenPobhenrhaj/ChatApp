@@ -12,14 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <TextView
             android:id="@+id/toolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/toolbar_title_user_list"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -41,21 +42,27 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonUsers"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:text="@string/button_one_to_one_chat"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:backgroundTint="#4CAF50"
+            app:cornerRadius="8dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonGroupChat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:text="@string/button_group_chat"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:backgroundTint="#4CAF50"
+            app:cornerRadius="8dp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -63,6 +70,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_buttons"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_user" />
 
@@ -71,6 +80,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_buttons"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_group_chat" />
@@ -82,7 +93,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_baseline_group_add_24"
+        android:src="@drawable/ic_baseline_group_add_25"
         app:tint="@android:color/white" />
 
 </RelativeLayout>
+

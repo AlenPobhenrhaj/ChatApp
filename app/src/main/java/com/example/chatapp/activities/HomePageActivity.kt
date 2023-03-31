@@ -33,10 +33,10 @@ class HomePageActivity : AppCompatActivity() {
 
     private val bottomNavListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
-            R.id.nav_chat -> {
+          /*  R.id.nav_chat -> {
                 startActivity(Intent(this, ChatActivity::class.java))
                 true
-            }
+            }*/
             R.id.nav_user_list -> {
                 startActivity(Intent(this, UserListActivity::class.java))
                 true

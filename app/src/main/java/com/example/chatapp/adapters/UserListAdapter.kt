@@ -1,17 +1,14 @@
 package com.example.chatapp.adapters
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapp.activities.ChatActivity
-import com.example.chatapp.activities.GroupChatActivity
 import com.example.chatapp.databinding.ItemUserBinding
 import com.example.chatapp.models.User
 
-class UserListAdapter : ListAdapter<User, UserListAdapter.UserViewHolder>(UserDiffCallback()) {
+class UserListAdapter(private val onItemClick: (User) -> Unit) : ListAdapter<User, UserListAdapter.UserViewHolder>(UserDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,21 +24,9 @@ class UserListAdapter : ListAdapter<User, UserListAdapter.UserViewHolder>(UserDi
             binding.userName.text = user.displayName
             // Set up an onClickListener
             binding.root.setOnClickListener {
-                onItemClick(user, binding)
+                onItemClick(user)
             }
         }
-    }
-
-    private fun onItemClick(user: User, binding: ItemUserBinding) {
-        val context = binding.root.context
-        val intent: Intent = if (user.isGroup) {
-            Intent(context, GroupChatActivity::class.java)
-        } else {
-            Intent(context, ChatActivity::class.java)
-        }
-        intent.putExtra("USER_ID", user.id)
-        intent.putExtra("USER_NAME", user.displayName)
-        context.startActivity(intent)
     }
 
     class UserDiffCallback : DiffUtil.ItemCallback<User>() {

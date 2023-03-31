@@ -2,6 +2,7 @@ package com.example.chatapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -38,7 +39,10 @@ class UserListActivity : AppCompatActivity() {
         userRef = database.getReference("users")
 
         // Set up RecyclerView
-        adapter = UserListAdapter()
+        adapter = UserListAdapter { user ->
+            val chatId = createOneToOneChatRoom(user)
+            openChatActivity(user, chatId)
+        }
         binding.userRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.userRecyclerView.adapter = adapter
 
@@ -74,10 +78,13 @@ class UserListActivity : AppCompatActivity() {
         userRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = mutableListOf<User>()
+                val currentUserId = auth.currentUser?.uid ?: return
                 for (childSnapshot in dataSnapshot.children) {
                     val user = childSnapshot.getValue(User::class.java)
                     user?.id = childSnapshot.key
-                    users.add(user!!)
+                    if (user != null && user.id != currentUserId) {
+                        users.add(user)
+                    }
                 }
                 adapter.submitList(users)
             }
@@ -124,6 +131,7 @@ class UserListActivity : AppCompatActivity() {
         binding.createGroupFab.visibility = View.VISIBLE
     }
 
+
     private fun createGroupChatDialog() {
         val binding = DialogCreateGroupBinding.inflate(layoutInflater)
         val groupMemberAdapter = GroupMemberAdapter()
@@ -142,6 +150,7 @@ class UserListActivity : AppCompatActivity() {
                 val groupName = binding.groupNameEditText.text.toString().trim()
                 if (groupName.isNotEmpty()) {
                     val selectedUserIds = groupMemberAdapter.getSelectedUserIds()
+                    Log.d("SelectedUserIds", "Selected users: $selectedUserIds")
                     selectedUserIds.add(auth.currentUser?.uid ?: return@setPositiveButton)
                     createGroupChat(groupName, selectedUserIds)
                 } else {
@@ -179,16 +188,42 @@ class UserListActivity : AppCompatActivity() {
 
 
     private fun createGroupChat(groupName: String, selectedUserIds: List<String>) {
+        if (selectedUserIds.size < 2) { // Minimum 2 selected users + current user
+            Toast.makeText(this, "Please select at least 2 more users to create a group.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val groupId = FirebaseDatabase.getInstance().getReference("/groups").push().key ?: return
-        val group = Group(id = groupId, groupName = groupName, users = selectedUserIds)
+        val groupUsers = selectedUserIds.toMutableList()
+        groupUsers.add(auth.currentUser?.uid ?: return)
+
+        val group = Group(id = groupId, groupName = groupName, users = groupUsers)
         FirebaseDatabase.getInstance().getReference("/groups/$groupId").setValue(group)
             .addOnSuccessListener {
                 startActivity(Intent(this, GroupChatActivity::class.java))
                 finish()
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener {
                 // Handle group chat creation failure
             }
+    }
+
+    private fun createOneToOneChatRoom(user: User): String {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return ""
+        val chatId = if (currentUserId < user.id.toString()) {
+            "$currentUserId-${user.id}"
+        } else {
+            "${user.id}-$currentUserId"
+        }
+        return chatId
+    }
+
+    private fun openChatActivity(user: User, chatId: String) {
+        val intent = Intent(this, ChatActivity::class.java)
+        intent.putExtra("USER_ID", user.id)
+        intent.putExtra("USER_NAME", user.displayName)
+        intent.putExtra("CHAT_ID", chatId)
+        startActivity(intent)
     }
 
     private fun signOut() {

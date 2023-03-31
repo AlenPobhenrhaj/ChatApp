@@ -2,12 +2,14 @@ package com.example.chatapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.adapters.ChatAdapter
 import com.example.chatapp.databinding.ActivityChatBinding
 import com.example.chatapp.models.ChatMessage
+import com.example.chatapp.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -20,6 +22,7 @@ class ChatActivity : AppCompatActivity() {
     private val chatMessages = mutableListOf<ChatMessage>()
     private lateinit var adapter: ChatAdapter
     private lateinit var auth: FirebaseAuth
+    private lateinit var chatId: String
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "User1"
 
     // This is called when the activity is created
@@ -30,6 +33,9 @@ class ChatActivity : AppCompatActivity() {
 
         // Initialize Firebase authentication
         auth = FirebaseAuth.getInstance()
+
+        // Get the chat ID from the intent
+        chatId = intent.getStringExtra("CHAT_ID") ?: ""
 
         // Set up the list of messages (RecyclerView)
         adapter = ChatAdapter(chatMessages, auth.currentUser?.uid ?: "")
@@ -72,7 +78,7 @@ class ChatActivity : AppCompatActivity() {
                         displayName = displayName
                     )
 
-                    val ref = FirebaseDatabase.getInstance().getReference("/messages").push()
+                    val ref = FirebaseDatabase.getInstance().getReference("/chats/$chatId/messages").push()
                     ref.setValue(chatMessage)
                         .addOnSuccessListener {
                             // Clear the input field
@@ -101,7 +107,7 @@ class ChatActivity : AppCompatActivity() {
     // Function to listen for new messages
     private fun listenForMessages() {
         // Get the messages from Firebase
-        val ref = FirebaseDatabase.getInstance().getReference("/messages")
+        val ref = FirebaseDatabase.getInstance().getReference("/chats/$chatId/messages")
         ref.addValueEventListener(object : ValueEventListener {
             // When we get new messages
             override fun onDataChange(snapshot: DataSnapshot) {
